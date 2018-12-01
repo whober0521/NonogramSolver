@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.btnSolve = new System.Windows.Forms.Button();
+            this.bgWorker = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // btnSolve
@@ -40,6 +41,14 @@
             this.btnSolve.TabIndex = 0;
             this.btnSolve.Text = "SOLVE";
             this.btnSolve.UseVisualStyleBackColor = true;
+            this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
+            // 
+            // bgWorker
+            // 
+            this.bgWorker.WorkerReportsProgress = true;
+            this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
+            this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
+            this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorker_RunWorkerCompleted);
             // 
             // Form1
             // 
@@ -57,6 +66,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnSolve;
+        private System.ComponentModel.BackgroundWorker bgWorker;
     }
 }
 

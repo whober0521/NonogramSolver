@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.ComponentModel;
+using System.Windows.Forms;
 using System.Drawing;
 using System;
 
@@ -6,6 +7,11 @@ namespace NonogramSolver
 {
     public partial class Form1 : Form
     {
+        Problem problem;
+        Board board;
+
+        bool?[,] blocks;
+
         public Form1()
         {
             InitializeComponent();
@@ -13,12 +19,12 @@ namespace NonogramSolver
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Problem problem = new Problem("Rocket");
-            Board b = new Board(problem.ColumnHint.Length, problem.RowHint.Length);
+            problem = new Problem("Rocket");
 
-            b.Location = new Point(120, 120);
+            board = new Board(problem.ColumnHint.Length, problem.RowHint.Length);
+            board.Location = new Point(120, 120);
 
-            this.Controls.Add(b);
+            this.Controls.Add(board);
 
             for (int x = 0; x < problem.ColumnHint.Length; x++)
             {
@@ -28,7 +34,7 @@ namespace NonogramSolver
                 l.Size = new Size(Board.GridSize, 100);
                 l.Font = new Font("Times New Roman", 10);
                 l.TextAlign = ContentAlignment.BottomCenter;
-                l.Location = new Point(b.Location.X + x * Board.GridSize, b.Location.Y - 100);
+                l.Location = new Point(board.Location.X + x * Board.GridSize, board.Location.Y - 100);
 
                 this.Controls.Add(l);
             }
@@ -41,10 +47,73 @@ namespace NonogramSolver
                 l.Size = new Size(100, Board.GridSize);
                 l.Font = new Font("Times New Roman", 10);
                 l.TextAlign = ContentAlignment.MiddleRight;
-                l.Location = new Point(b.Location.X - 100, b.Location.Y + y * Board.GridSize);
+                l.Location = new Point(board.Location.X - 100, board.Location.Y + y * Board.GridSize);
 
                 this.Controls.Add(l);
             }
+        }
+
+        private void btnSolve_Click(object sender, EventArgs e)
+        {
+            blocks = new bool?[problem.ColumnHint.Length, problem.RowHint.Length];
+
+            this.bgWorker.RunWorkerAsync();
+        }
+
+        private void bgWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            this.Solve((BackgroundWorker)sender, e);
+        }
+
+        private void Solve(BackgroundWorker worker, DoWorkEventArgs e)
+        {
+            System.Threading.Thread.Sleep(300);
+
+            worker.ReportProgress(0);
+        }
+
+        private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            for (int x = 0; x < problem.ColumnHint.Length; x++)
+                for (int y = 0; y < problem.RowHint.Length; y++)
+                {
+                    switch (blocks[x, y])
+                    {
+                        case null:
+                            break;
+                        case true:
+                            board[x, y].Text = "";
+                            board[x, y].BackColor = Color.Black;
+                            break;
+                        case false:
+                            board[x, y].Text = "X";
+                            board[x, y].BackColor = Color.White;
+                            break;
+                    }
+                }
+
+            this.Refresh();
+        }
+
+        private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            for (int x = 0; x < problem.ColumnHint.Length; x++)
+                for (int y = 0; y < problem.RowHint.Length; y++)
+                {
+                    switch (blocks[x, y])
+                    {
+                        case null:
+                            break;
+                        case true:
+                            board[x, y].Text = "";
+                            board[x, y].BackColor = Color.Black;
+                            break;
+                        case false:
+                            board[x, y].Text = "";
+                            board[x, y].BackColor = Color.White;
+                            break;
+                    }
+                }
         }
     }
 
