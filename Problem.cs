@@ -1,4 +1,6 @@
-﻿namespace NonogramSolver
+﻿using System.Linq;
+
+namespace NonogramSolver
 {
     public class Problem
     {
@@ -83,11 +85,24 @@
         {
             IsSolved = true;
 
+            bool?[] line;
+
             for (int x = 0; x < ColumnHint.Length; x++)
-                continue;
+            {
+                line = Enumerable.Range(0, Blocks.GetUpperBound(1) + 1).Select(i => Blocks[x, i]).ToArray();
+                SolveLine(line, ColumnHint[x]);
+            }
 
             for (int y = 0; y < RowHint.Length; y++)
-                continue;
+            {
+                line = Enumerable.Range(0, Blocks.GetUpperBound(0) + 1).Select(i => Blocks[i, y]).ToArray();
+                SolveLine(line, RowHint[y]);
+            }
+        }
+
+        private void SolveLine(bool?[] line, int[] hint)
+        {
+
         }
     }
 }
