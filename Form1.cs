@@ -53,6 +53,8 @@ namespace NonogramSolver
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
+            btnSolve.Enabled = false;
+
             this.bgWorker.RunWorkerAsync();
         }
 
@@ -63,14 +65,14 @@ namespace NonogramSolver
 
         private void Solve(BackgroundWorker worker, DoWorkEventArgs e)
         {
-            while (!problem.IsSolved)
-            {
-                System.Threading.Thread.Sleep(300);
+            //while (!problem.IsSolved)
+            //{
+            System.Threading.Thread.Sleep(300);
 
-                problem.Solve();
+            problem.Solve();
 
-                worker.ReportProgress(0);
-            }
+            worker.ReportProgress(0);
+            //}
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -98,23 +100,25 @@ namespace NonogramSolver
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            for (int x = 0; x < problem.ColumnHint.Length; x++)
-                for (int y = 0; y < problem.RowHint.Length; y++)
-                {
-                    switch (problem.Blocks[x, y])
-                    {
-                        case null:
-                            break;
-                        case true:
-                            board[x, y].Text = "";
-                            board[x, y].BackColor = Color.Black;
-                            break;
-                        case false:
-                            board[x, y].Text = "";
-                            board[x, y].BackColor = Color.White;
-                            break;
-                    }
-                }
+            //for (int x = 0; x < problem.ColumnHint.Length; x++)
+            //    for (int y = 0; y < problem.RowHint.Length; y++)
+            //    {
+            //        switch (problem.Blocks[x, y])
+            //        {
+            //            case null:
+            //                break;
+            //            case true:
+            //                board[x, y].Text = "";
+            //                board[x, y].BackColor = Color.Black;
+            //                break;
+            //            case false:
+            //                board[x, y].Text = "";
+            //                board[x, y].BackColor = Color.White;
+            //                break;
+            //        }
+            //    }
+
+            btnSolve.Enabled = true;
         }
     }
 

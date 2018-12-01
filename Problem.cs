@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace NonogramSolver
 {
@@ -104,8 +105,6 @@ namespace NonogramSolver
                 for (int i = 0; i < line.Length; i++)
                     Blocks[i, y] = line[i];
             }
-
-            IsSolved = true;
         }
 
         private bool?[] SolveLine(bool?[] line, int[] hint)
@@ -115,7 +114,18 @@ namespace NonogramSolver
             if (result.Count(x => x == null) != 0)
                 result = HintNumbersSum(result, hint);
 
-            if (result.Count(x => x == null) != 0) IsSolved = false;
+            if (result.Count(x => x == null) != 0)
+                result = Edge(result, hint);
+
+            if (result.Count(x => x == true) == hint.Sum(x => x))
+            {
+                for (int i = 0; i < result.Length; i++)
+                    if (result[i] == null) result[i] = false;
+            }
+            else
+            {
+                IsSolved = false;
+            }
 
             return result;
         }
@@ -142,6 +152,67 @@ namespace NonogramSolver
                         idx++;
                     }
                 }
+            }
+
+            return result;
+        }
+
+        private bool?[] Edge(bool?[] line, int[] hint)
+        {
+            List<int> hints = hint.ToList();
+            bool?[] result = line;
+            int idx = 0;
+
+            while (hints.Count != 0 && idx < line.Length)
+            {
+                if (result[idx] == null) break;
+
+                if (result[idx] == true)
+                {
+                    for (int i = 0; i < hints[0]; i++)
+                    {
+                        result[idx] = true;
+                        idx++;
+                    }
+
+                    if (idx != result.Length)
+                    {
+                        result[idx] = false;
+                        idx++;
+                    }
+
+                    idx--;
+                    hints.RemoveAt(0);
+                }
+
+                idx++;
+            }
+
+            idx = line.Length - 1;
+
+            while (hints.Count != 0 && idx >= 0)
+            {
+                if (result[idx] == null) break;
+
+                if (result[idx] == true)
+                {
+                    for (int i = 0; i < hints[hints.Count - 1]; i++)
+                    {
+                        result[idx] = true;
+                        idx--;
+                    }
+
+                    if (idx != 0)
+                    {
+                        result[idx] = false;
+                        idx--;
+                    }
+
+                    idx++;
+                    hints.RemoveAt(hints.Count - 1);
+                }
+
+                idx--;
             }
 
             return result;
