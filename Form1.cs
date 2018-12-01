@@ -63,10 +63,10 @@ namespace NonogramSolver
 
         private void Solve(BackgroundWorker worker, DoWorkEventArgs e)
         {
-            System.Threading.Thread.Sleep(300);
-
             while (!problem.IsSolved)
             {
+                System.Threading.Thread.Sleep(300);
+
                 problem.Solve();
 
                 worker.ReportProgress(0);

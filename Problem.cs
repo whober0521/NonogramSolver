@@ -90,19 +90,61 @@ namespace NonogramSolver
             for (int x = 0; x < ColumnHint.Length; x++)
             {
                 line = Enumerable.Range(0, Blocks.GetUpperBound(1) + 1).Select(i => Blocks[x, i]).ToArray();
-                SolveLine(line, ColumnHint[x]);
+                line = SolveLine(line, ColumnHint[x]);
+
+                for (int i = 0; i < line.Length; i++)
+                    Blocks[x, i] = line[i];
             }
 
             for (int y = 0; y < RowHint.Length; y++)
             {
                 line = Enumerable.Range(0, Blocks.GetUpperBound(0) + 1).Select(i => Blocks[i, y]).ToArray();
-                SolveLine(line, RowHint[y]);
+                line = SolveLine(line, RowHint[y]);
+
+                for (int i = 0; i < line.Length; i++)
+                    Blocks[i, y] = line[i];
             }
+
+            IsSolved = true;
         }
 
-        private void SolveLine(bool?[] line, int[] hint)
+        private bool?[] SolveLine(bool?[] line, int[] hint)
         {
+            bool?[] result = line;
 
+            if (result.Count(x => x == null) != 0)
+                result = HintNumbersSum(result, hint);
+
+            if (result.Count(x => x == null) != 0) IsSolved = false;
+
+            return result;
+        }
+
+        private bool?[] HintNumbersSum(bool?[] line, int[] hint)
+        {
+            bool?[] result = line;
+
+            if (hint.Sum(x => x) + hint.Length - 1 == result.Length)
+            {
+                int idx = 0;
+
+                for (int i = 0; i < hint.Length; i++)
+                {
+                    for (int j = 0; j < hint[i]; j++)
+                    {
+                        result[idx] = true;
+                        idx++;
+                    }
+
+                    if (idx != result.Length)
+                    {
+                        result[idx] = false;
+                        idx++;
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }
