@@ -61,7 +61,7 @@
 
                     RowHint = new int[][] {
                         new int[] { 24 }, new int[] { 27 }, new int[] { 30 },new int[] {20, 9 },new int[] { 19, 8 },
-                        new int[] { 8, ,8, 7 }, new int[] { 6, 2, 4 }, new int[] { 5, 1, 4 },new int[] { 4, 4 },new int[] { 4, 5 },
+                        new int[] { 8, 8, 7 }, new int[] { 6, 2, 4 }, new int[] { 5, 1, 4 },new int[] { 4, 4 },new int[] { 4, 5 },
                         new int[] { 4, 5 }, new int[] { 4, 6 }, new int[] { 4, 5 },new int[] { 4, 5 },new int[] { 4, 6 },
                         new int[] { 4, 5 }, new int[] { 4, 2, 3, 5  }, new int[] { 4, 6, 8 ,5 },new int[] { 4, 9, 10, 5},new int[] { 4, 9, 16 },
                         new int[] { 5, 8, 15 }, new int[] { 5, 3, 5, 2, 5, 4 }, new int[] { 2, 2, 1, 2, 1, 3, 3 },new int[] { 1, 1, 3, 3, 3 },new int[] { 1, 2, 1, 3, 3 },
