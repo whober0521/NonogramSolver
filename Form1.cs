@@ -10,8 +10,6 @@ namespace NonogramSolver
         Problem problem;
         Board board;
 
-        bool?[,] blocks;
-
         public Form1()
         {
             InitializeComponent();
@@ -55,8 +53,6 @@ namespace NonogramSolver
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
-            blocks = new bool?[problem.ColumnHint.Length, problem.RowHint.Length];
-
             this.bgWorker.RunWorkerAsync();
         }
 
@@ -69,7 +65,12 @@ namespace NonogramSolver
         {
             System.Threading.Thread.Sleep(300);
 
-            worker.ReportProgress(0);
+            while (!problem.IsSolved)
+            {
+                problem.Solve();
+
+                worker.ReportProgress(0);
+            }
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -77,7 +78,7 @@ namespace NonogramSolver
             for (int x = 0; x < problem.ColumnHint.Length; x++)
                 for (int y = 0; y < problem.RowHint.Length; y++)
                 {
-                    switch (blocks[x, y])
+                    switch (problem.Blocks[x, y])
                     {
                         case null:
                             break;
@@ -100,7 +101,7 @@ namespace NonogramSolver
             for (int x = 0; x < problem.ColumnHint.Length; x++)
                 for (int y = 0; y < problem.RowHint.Length; y++)
                 {
-                    switch (blocks[x, y])
+                    switch (problem.Blocks[x, y])
                     {
                         case null:
                             break;

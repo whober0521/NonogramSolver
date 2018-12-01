@@ -5,6 +5,9 @@
         public int[][] ColumnHint { get; set; }
         public int[][] RowHint { get; set; }
 
+        public bool?[,] Blocks { get; set; }
+        public bool IsSolved { get; set; }
+
         public Problem(string name)
         {
             switch (name)
@@ -72,6 +75,19 @@
                     };
                     break;
             }
+
+            Blocks = new bool?[ColumnHint.Length, RowHint.Length];
+        }
+
+        public void Solve()
+        {
+            IsSolved = true;
+
+            for (int x = 0; x < ColumnHint.Length; x++)
+                continue;
+
+            for (int y = 0; y < RowHint.Length; y++)
+                continue;
         }
     }
 }
