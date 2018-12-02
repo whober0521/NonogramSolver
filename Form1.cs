@@ -65,14 +65,9 @@ namespace NonogramSolver
 
         private void Solve(BackgroundWorker worker, DoWorkEventArgs e)
         {
-            //while (!problem.IsSolved)
-            //{
-            System.Threading.Thread.Sleep(300);
-
             problem.Solve();
 
             worker.ReportProgress(0);
-            //}
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -100,23 +95,10 @@ namespace NonogramSolver
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //for (int x = 0; x < problem.ColumnHint.Length; x++)
-            //    for (int y = 0; y < problem.RowHint.Length; y++)
-            //    {
-            //        switch (problem.Blocks[x, y])
-            //        {
-            //            case null:
-            //                break;
-            //            case true:
-            //                board[x, y].Text = "";
-            //                board[x, y].BackColor = Color.Black;
-            //                break;
-            //            case false:
-            //                board[x, y].Text = "";
-            //                board[x, y].BackColor = Color.White;
-            //                break;
-            //        }
-            //    }
+            if (problem.IsSolved)
+                for (int x = 0; x < problem.ColumnHint.Length; x++)
+                    for (int y = 0; y < problem.RowHint.Length; y++)
+                        if (problem.Blocks[x, y] == false) board[x, y].Text = "";
 
             btnSolve.Enabled = true;
         }

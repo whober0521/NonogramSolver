@@ -115,12 +115,26 @@ namespace NonogramSolver
                 result = HintNumbersSum(result, hint);
 
             if (result.Count(x => x == null) != 0)
+            {
                 result = Edge(result, hint);
+                result = Edge(result.Reverse().ToArray(), hint.Reverse().ToArray()).Reverse().ToArray();
+            }
+
+            if (result.Count(x => x == null) != 0)
+            {
+                result = Elimination(result, hint);
+                result = Elimination(result.Reverse().ToArray(), hint.Reverse().ToArray()).Reverse().ToArray();
+            }
 
             if (result.Count(x => x == true) == hint.Sum(x => x))
             {
                 for (int i = 0; i < result.Length; i++)
                     if (result[i] == null) result[i] = false;
+            }
+            else if (result.Count(x => x == true) + result.Count(x => x == null) == hint.Sum(x => x))
+            {
+                for (int i = 0; i < result.Length; i++)
+                    if (result[i] == null) result[i] = true;
             }
             else
             {
@@ -157,6 +171,7 @@ namespace NonogramSolver
             return result;
         }
 
+
         private bool?[] Edge(bool?[] line, int[] hint)
         {
             List<int> hints = hint.ToList();
@@ -188,31 +203,63 @@ namespace NonogramSolver
                 idx++;
             }
 
-            idx = line.Length - 1;
+            return result;
+        }
 
-            while (hints.Count != 0 && idx >= 0)
+        private bool?[] Elimination(bool?[] line, int[] hint)
+        {
+            List<int> hints = hint.ToList();
+            bool?[] result = line;
+
+            bool isEdge = true;
+            int empty = 0;
+            int idx = 0;
+
+            while (hints.Count != 0 && idx < line.Length)
             {
-                if (result[idx] == null) break;
-
-                if (result[idx] == true)
+                switch (result[idx])
                 {
-                    for (int i = 0; i < hints[hints.Count - 1]; i++)
-                    {
-                        result[idx] = true;
-                        idx--;
-                    }
+                    case null:
+                        isEdge = false;
+                        empty++;
+                        break;
+                    case true:
+                        if (isEdge)
+                        {
+                            for (int i = 0; i < hints[0]; i++)
+                                idx++;
 
-                    if (idx != 0)
-                    {
-                        result[idx] = false;
-                        idx--;
-                    }
+                            idx--;
+                            hints.RemoveAt(0);
+                        }
+                        else if (empty != 0)
+                        {
+                            idx = line.Length;
+                        }
 
-                    idx++;
-                    hints.RemoveAt(hints.Count - 1);
+                        empty = 0;
+                        isEdge = false;
+                        break;
+                    case false:
+                        if (empty != 0)
+                        {
+                            if (empty < hints[0])
+                            {
+                                for (int i = 0; i < idx; i++)
+                                    if (result[i] == null) result[i] = false;
+                            }
+                            else
+                            {
+                                idx = line.Length;
+                            }
+                        }
+
+                        empty = 0;
+                        isEdge = true;
+                        break;
                 }
 
-                idx--;
+                idx++;
             }
 
             return result;
