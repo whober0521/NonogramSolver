@@ -17,10 +17,10 @@ namespace NonogramSolver
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            problem = new Problem("Rocket");
+            problem = new Problem("Musician");
 
             board = new Board(problem.ColumnHint.Length, problem.RowHint.Length);
-            board.Location = new Point(120, 120);
+            board.Location = new Point(110, 110);
 
             this.Controls.Add(board);
 
@@ -29,10 +29,10 @@ namespace NonogramSolver
                 Label l = new Label();
 
                 l.Text = string.Join("\r\n", problem.ColumnHint[x]);
-                l.Size = new Size(Board.GridSize, 100);
-                l.Font = new Font("Times New Roman", 10);
+                l.Size = new Size(Board.GridSize, 120);
+                l.Font = new Font("Times New Roman", 8);
                 l.TextAlign = ContentAlignment.BottomCenter;
-                l.Location = new Point(board.Location.X + x * Board.GridSize, board.Location.Y - 100);
+                l.Location = new Point(board.Location.X + x * Board.GridSize, board.Location.Y - 120);
 
                 this.Controls.Add(l);
             }
@@ -42,10 +42,10 @@ namespace NonogramSolver
                 Label l = new Label();
 
                 l.Text = string.Join(" ", problem.RowHint[y]);
-                l.Size = new Size(100, Board.GridSize);
-                l.Font = new Font("Times New Roman", 10);
+                l.Size = new Size(120, Board.GridSize);
+                l.Font = new Font("Times New Roman", 8);
                 l.TextAlign = ContentAlignment.MiddleRight;
-                l.Location = new Point(board.Location.X - 100, board.Location.Y + y * Board.GridSize);
+                l.Location = new Point(board.Location.X - 120, board.Location.Y + y * Board.GridSize);
 
                 this.Controls.Add(l);
             }
@@ -106,7 +106,7 @@ namespace NonogramSolver
 
     public class Board : Panel
     {
-        public const int GridSize = 24;
+        public const int GridSize = 20;
 
         private Button[,] Grids { get; set; }
 

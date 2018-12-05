@@ -54,7 +54,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(978, 1144);
+            this.ClientSize = new System.Drawing.Size(1228, 1944);
             this.Controls.Add(this.btnSolve);
             this.Name = "Form1";
             this.Text = "Nonogram Solver";
