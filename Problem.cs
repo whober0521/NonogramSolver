@@ -111,28 +111,25 @@ namespace NonogramSolver
         {
             bool?[] result = line;
 
-            if (result.Count(x => x == null) != 0)
-                result = HintNumbersSum(result, hint);
+            if (result.Count(x => x == null) != 0) result = HintNumbersSum(result, hint);
+            if (result.Count(x => x == null) != 0) result = Edge(result, hint);
+            if (result.Count(x => x == null) != 0) result = Elimination(result, hint);
+            if (result.Count(x => x == null) != 0) result = Overlapping(result, hint);
+            if (result.Count(x => x == null) != 0) result = Separation(result, hint);
 
-            if (result.Count(x => x == null) != 0)
-            {
-                result = Edge(result, hint);
-                result = Edge(result.Reverse().ToArray(), hint.Reverse().ToArray()).Reverse().ToArray();
-            }
+            result = result.Reverse().ToArray();
+            hint = hint.Reverse().ToArray();
 
-            if (result.Count(x => x == null) != 0)
-            {
-                result = Elimination(result, hint);
-                result = Elimination(result.Reverse().ToArray(), hint.Reverse().ToArray()).Reverse().ToArray();
-            }
-
-            if (result.Count(x => x == null) != 0)
-            {
-                result = Overlapping(result, hint);
-                result = Overlapping(result.Reverse().ToArray(), hint.Reverse().ToArray()).Reverse().ToArray();
-            }
+            if (result.Count(x => x == null) != 0) result = HintNumbersSum(result, hint);
+            if (result.Count(x => x == null) != 0) result = Edge(result, hint);
+            if (result.Count(x => x == null) != 0) result = Elimination(result, hint);
+            if (result.Count(x => x == null) != 0) result = Overlapping(result, hint);
+            if (result.Count(x => x == null) != 0) result = Separation(result, hint);
 
             if (result.Count(x => x == null) != 0) IsSolved = false;
+
+            result = result.Reverse().ToArray();
+            hint = hint.Reverse().ToArray();
 
             return result;
         }
@@ -320,9 +317,6 @@ namespace NonogramSolver
             int black = 0;
             int idx = 0;
 
-            int startidx = 0;
-            int endidx = result.Length - 1;
-
             while (hints.Count != 0 && idx < line.Length)
             {
                 switch (result[idx])
@@ -342,8 +336,23 @@ namespace NonogramSolver
 
                                 idx = line.Length;
                             }
+                            else if (black == hints[0] && empty < hints[0])
+                            {
+                                result[idx] = false;
+
+                                for (int i = 0; i < idx; i++)
+                                    if (result[i] == null) result[i] = false;
+
+                                hints.RemoveAt(0);
+                                empty = -1;
+                            }
+                            else
+                            {
+                                idx = line.Length;
+                            }
                         }
 
+                        black = 0;
                         empty++;
                         break;
                     case true:
@@ -351,43 +360,124 @@ namespace NonogramSolver
                         break;
                     case false:
                         if (black == hints[0]) hints.RemoveAt(0);
-
-                        if (empty != 0)
-                        {
-                            endidx = idx;
-                            idx = line.Length;
-                        }
+                        if (empty != 0) idx = line.Length;
 
                         empty = 0;
                         black = 0;
-                        startidx = idx;
                         break;
                 }
 
                 idx++;
             }
 
-            if (empty == result.Count(x => x == null))
+            if (hints.Count != 0)
             {
-                idx = line.Length - 1;
-                black = 0;
+                int startidx = 0;
+                int endidx = result.Length - 1;
 
-                while (result[idx] != null && idx >= 0)
+                hints = hint.ToList();
+                black = 0;
+                idx = 0;
+
+                while (idx < line.Length && result[idx] != null)
                 {
                     if (result[idx] == true)
                         black++;
-                    else if (black == hints[hints.Count - 1])
+                    else
                     {
-                        hints.RemoveAt(hints.Count - 1);
+                        if (black == hints[0]) hints.RemoveAt(0);
+                        startidx = idx;
+                        black = 0;
+                    }
+
+                    idx++;
+                }
+
+                idx = line.Length - 1;
+                black = 0;
+
+                while (idx >= 0 && result[idx] != null && hints.Count != 0)
+                {
+                    if (result[idx] == true)
+                        black++;
+                    else
+                    {
+                        if (black == hints[hints.Count - 1]) hints.RemoveAt(hints.Count - 1);
                         endidx = idx;
+                        black = 0;
                     }
 
                     idx--;
                 }
 
-                if (startidx + hints[0] > endidx - (hints.Sum(x => x) + hints.Count - 2))
-                    for (int i = endidx - (hints.Sum(x => x) + hints.Count - 2); i < startidx + hints[0]; i++)
-                        result[i] = true;
+                if (startidx < endidx && hints.Count != 0)
+                {
+                    if (startidx + hints[0] > endidx - (hints.Sum(x => x) + hints.Count - 2))
+                        for (int i = endidx - (hints.Sum(x => x) + hints.Count - 1) + 1; i < startidx + hints[0]; i++)
+                            result[i] = true;
+                }
+            }
+
+            return result;
+        }
+
+        private bool?[] Separation(bool?[] line, int[] hint)
+        {
+            List<int> hints = hint.ToList();
+            bool?[] result = line;
+            int idx = 0;
+            int empty = 0;
+            int black = 0;
+            int startidx = 0;
+
+            while (hints.Count != 0 && idx < line.Length)
+            {
+                switch (result[idx])
+                {
+                    case null:
+                        empty++;
+                        if (empty + black >= hints.Take(2).Sum(x => x) + 1) idx = line.Length;
+                        break;
+                    case true:
+                        black++;
+                        break;
+                    case false:
+                        if (black != 0)
+                        {
+                            if (black == hints[0] && empty == 0)
+                            {
+                                hints.RemoveAt(0);
+                            }
+                            else if (empty + black < hints.Take(2).Sum(x => x) + 1)
+                            {
+                                if (result[idx - 1] == true)
+                                {
+                                    for (int i = 0; i < hints[0]; i++)
+                                        result[idx - i - 1] = true;
+                                }
+                                else
+                                {
+                                    for (int i = idx - hints[0]; i < startidx + hints[0]; i++)
+                                        result[i] = true;
+
+                                    idx = line.Length;
+                                }
+
+                                idx = line.Length;
+                            }
+                            else
+                            {
+                                idx = line.Length;
+                            }
+                        }
+
+                        black = 0;
+                        empty = 0;
+                        startidx = idx;
+                        break;
+                }
+
+                idx++;
             }
 
             return result;
