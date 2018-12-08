@@ -428,7 +428,8 @@ namespace NonogramSolver
             int idx = 0;
             int empty = 0;
             int black = 0;
-            int startidx = 0;
+            int startidx = -1;
+            int startlast = -1;
 
             while (hints.Count != 0 && idx < line.Length)
             {
@@ -441,13 +442,21 @@ namespace NonogramSolver
                     case true:
                         black++;
 
-                        if (black != 0 && empty != 0 && result[idx - 1] == null)
+                        if (black != 1 && empty != 0 && result[idx - 1] == null && black + 1 > hints[0])
                         {
-                            if (black + 1 > hints[0])
+                            if (black + 1 > hints[1])
                             {
                                 result[idx - 1] = false;
-                                idx = line.Length;
                             }
+                            else if (startidx >= hints[0])
+                            {
+                                result[idx - 1] = true;
+
+                                for (int i = startidx - hints[0]; i < startlast + 1 + hints[0]; i++)
+                                    result[i] = true;
+                            }
+
+                            idx = line.Length;
                         }
 
                         break;
@@ -465,14 +474,14 @@ namespace NonogramSolver
                                     for (int i = 0; i < hints[0]; i++)
                                         result[idx - i - 1] = true;
 
-                                    for (int i = startidx; i < idx; i++)
+                                    for (int i = startidx + 1; i < idx; i++)
                                         if (result[i] == null) result[i] = false;
 
                                     hints.RemoveAt(0);
                                 }
                                 else
                                 {
-                                    for (int i = idx - hints[0]; i < startidx + hints[0]; i++)
+                                    for (int i = idx - hints[0]; i < startidx + 1 + hints[0]; i++)
                                         result[i] = true;
 
                                     idx = line.Length;
@@ -486,6 +495,7 @@ namespace NonogramSolver
 
                         black = 0;
                         empty = 0;
+                        startlast = startidx;
                         startidx = idx;
                         break;
                 }
