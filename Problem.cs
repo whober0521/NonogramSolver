@@ -412,9 +412,17 @@ namespace NonogramSolver
 
                 if (startidx < endidx && hints.Count != 0)
                 {
-                    if (startidx + hints[0] > endidx - (hints.Sum(x => x) + hints.Count - 2))
-                        for (int i = endidx - (hints.Sum(x => x) + hints.Count - 1); i < startidx + hints[0]; i++)
-                            result[i] = true;
+                    for (int i = 0; i < hints.Count; i++)
+                    {
+                        int end = startidx + hints.Take(i + 1).Sum(x => x) + i;
+                        int start = endidx - (hints.Skip(i).Sum(x => x) + (hints.Skip(i).Count() - 1));
+
+                        if (start >= 0 && end < line.Length && end > start)
+                        {
+                            for (int j = start; j < end; j++)
+                                result[j] = true;
+                        }
+                    }
                 }
             }
 
@@ -437,18 +445,19 @@ namespace NonogramSolver
                 {
                     case null:
                         empty++;
+                        if (empty >= hints[0] * 2) idx = line.Length;
                         if (empty + black >= hints.Take(2).Sum(x => x) + 1) idx = line.Length;
                         break;
                     case true:
                         black++;
 
-                        if (black != 1 && empty != 0 && result[idx - 1] == null && black + 1 > hints[0])
+                        if (black != 1 && empty != 0 && startidx >= hints[0] && result[idx - 1] == null && result[idx - 2] == true && black + 1 > hints[0])
                         {
                             if (black + 1 > hints[1])
                             {
                                 result[idx - 1] = false;
                             }
-                            else if (startidx >= hints[0])
+                            else
                             {
                                 result[idx - 1] = true;
 
