@@ -425,26 +425,26 @@ namespace NonogramSolver
                     }
                 }
 
-                if (hints.Count == 1)
+                int first = 0;
+                int last = 0;
+
+                for (int i = startidx + 1; i < endidx; i++)
+                    if (result[i] == true)
+                    {
+                        first = i;
+                        break;
+                    }
+
+                for (int i = endidx - 1; i >= 0; i--)
+                    if (result[i] == true)
+                    {
+                        last = i;
+                        break;
+                    }
+
+                if (first != 0 && last != 0)
                 {
-                    int first = 0;
-                    int last = 0;
-
-                    for (int i = startidx + 1; i < endidx; i++)
-                        if (result[i] == true)
-                        {
-                            first = i;
-                            break;
-                        }
-
-                    for (int i = endidx - 1; i >= 0; i--)
-                        if (result[i] == true)
-                        {
-                            last = i;
-                            break;
-                        }
-
-                    if (first != 0 && last != 0)
+                    if (hints.Count == 1)
                     {
                         for (int i = startidx + 1; i < endidx; i++)
                         {
@@ -454,6 +454,42 @@ namespace NonogramSolver
                                 result[i] = false;
                             else if (i >= first + hints[0])
                                 result[i] = false;
+                        }
+                    }
+                    else if (hints.Count == 2)
+                    {
+                        int x = 0;
+
+                        for (int i = first; i < last; i++)
+                            if (result[i] == false)
+                            {
+                                x = i;
+                                break;
+                            }
+
+                        if (x != 0)
+                        {
+                            for (int i = startidx + 1; i < x; i++)
+                            {
+                                if (result[i] == null)
+                                {
+                                    if (i < first - hints[0])
+                                        result[i] = false;
+                                    else if (i > first + hints[0])
+                                        result[i] = false;
+                                }
+                            }
+
+                            for (int i = x; i < endidx; i++)
+                            {
+                                if (result[i] == null)
+                                {
+                                    if (i < last - hints[1] + 1)
+                                        result[i] = false;
+                                    else if (i > last + hints[1])
+                                        result[i] = false;
+                                }
+                            }
                         }
                     }
                 }
