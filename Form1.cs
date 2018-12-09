@@ -17,7 +17,7 @@ namespace NonogramSolver
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            problem = new Problem("Rocket");
+            problem = new Problem("President");
 
             board = new Board(problem.ColumnHint.Length, problem.RowHint.Length);
             board.Location = new Point(110, 110);
