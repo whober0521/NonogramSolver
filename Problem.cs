@@ -444,104 +444,53 @@ namespace NonogramSolver
 
                 if (first != 0 && last != 0)
                 {
-                    if (hints.Count == 1)
-                    {
-                        for (int i = startidx + 1; i < endidx; i++)
-                        {
-                            if (i >= first && i <= last)
-                                result[i] = true;
-                            else if (i < last - hints[0])
-                                result[i] = false;
-                            else if (i >= first + hints[0])
-                                result[i] = false;
-                        }
-                    }
-                    else if (hints.Count == 2)
-                    {
-                        int x = 0;
+                    string s = "";
 
-                        for (int i = first; i < last; i++)
-                            if (result[i] == false)
-                            {
-                                x = i;
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        switch (result[i])
+                        {
+                            case null:
+                                s += "0";
                                 break;
-                            }
-
-                        if (x != 0)
-                        {
-                            for (int i = startidx + 1; i < x; i++)
-                            {
-                                if (result[i] == null)
-                                {
-                                    if (i < first - hints[0])
-                                        result[i] = false;
-                                    else if (i > first + hints[0])
-                                        result[i] = false;
-                                }
-                            }
-
-                            for (int i = x; i < endidx; i++)
-                            {
-                                if (result[i] == null)
-                                {
-                                    if (i < last - hints[1] + 1)
-                                        result[i] = false;
-                                    else if (i > last + hints[1])
-                                        result[i] = false;
-                                }
-                            }
+                            case true:
+                                s += "T";
+                                break;
+                            case false:
+                                s += "F";
+                                break;
                         }
                     }
-                    else if (hint.Length == 3 && hints.Count == 3)
+
+                    string[] array = s.Replace("0", "").Split('F').Where(x => x.Contains("T")).ToArray();
+
+                    if (array.Length == hint.Length)
                     {
-                        string s = "";
+                        int i = 0;
+                        first = s.IndexOf("T");
+                        last = first + array[i].Trim().Length - 1;
+                        idx = 0;
 
-                        for (int i = 0; i < line.Length; i++)
+                        while (idx < line.Length)
                         {
-                            switch (result[i])
+                            if (result[idx] == null)
                             {
-                                case null:
-                                    s += "0";
-                                    break;
-                                case true:
-                                    s += "T";
-                                    break;
-                                case false:
-                                    s += "F";
-                                    break;
+                                if (idx <= last - hint[i])
+                                    result[idx] = false;
+                                else if (idx > last + hint[i])
+                                    result[idx] = false;
                             }
-                        }
-
-                        string[] array = s.Replace('0', ' ').Split('F').Where(x => x.Trim() != "").ToArray();
-
-                        if (array.Length == 3)
-                        {
-                            int i = 0;
-                            first = s.IndexOf("T");
-                            last = first + array[i].Trim().Length - 1;
-                            idx = startidx + 1;
-
-                            while (idx < line.Length)
+                            else if (result[idx] == false && idx >= last)
                             {
-                                if (result[idx] == null)
-                                {
-                                    if (idx < last - hints[i])
-                                        result[idx] = false;
-                                    else if (idx > last + hints[i])
-                                        result[idx] = false;
-                                }
-                                else if (result[idx] == false)
-                                {
-                                    i++;
+                                i++;
 
-                                    if (i >= hints.Count) break;
+                                if (i >= hint.Length) break;
 
-                                    first = s.IndexOf("T", idx);
-                                    last = first + array[i].Trim().Length - 1;
-                                }
-
-                                idx++;
+                                first = s.IndexOf("T", idx);
+                                last = first + array[i].Trim().Length - 1;
                             }
+
+                            idx++;
                         }
                     }
                 }
