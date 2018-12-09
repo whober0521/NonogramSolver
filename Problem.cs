@@ -419,8 +419,41 @@ namespace NonogramSolver
 
                         if (start >= 0 && end < line.Length && end > start)
                         {
-                            for (int j = start; j < end; j++)
+                            for (int j = start; j <= end; j++)
                                 result[j] = true;
+                        }
+                    }
+                }
+
+                if (hints.Count == 1)
+                {
+                    int first = 0;
+                    int last = 0;
+
+                    for (int i = startidx + 1; i < endidx; i++)
+                        if (result[i] == true)
+                        {
+                            first = i;
+                            break;
+                        }
+
+                    for (int i = endidx - 1; i >= 0; i--)
+                        if (result[i] == true)
+                        {
+                            last = i;
+                            break;
+                        }
+
+                    if (first != 0 && last != 0)
+                    {
+                        for (int i = startidx + 1; i < endidx; i++)
+                        {
+                            if (i >= first && i <= last)
+                                result[i] = true;
+                            else if (i < last - hints[0])
+                                result[i] = false;
+                            else if (i >= first + hints[0])
+                                result[i] = false;
                         }
                     }
                 }
@@ -444,9 +477,17 @@ namespace NonogramSolver
                 switch (result[idx])
                 {
                     case null:
+                        //if (black == hints[0] && result[idx - 1] == true && empty + black > hints[0])
+                        //{
+                        //    result[idx] = false;
+                        //    idx = line.Length;
+                        //}
+
                         empty++;
+
                         if (empty >= hints[0] * 2) idx = line.Length;
                         if (empty + black >= hints.Take(2).Sum(x => x) + 1) idx = line.Length;
+
                         break;
                     case true:
                         black++;
