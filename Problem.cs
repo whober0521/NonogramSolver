@@ -552,7 +552,7 @@ namespace NonogramSolver
                             {
                                 hints.RemoveAt(0);
                             }
-                            else if (hints.Count > 1 && black == hints[1])
+                            else if (black == hints[0] || (hints.Count > 1 && black == hints[1]))
                             {
                                 idx = line.Length;
                             }
