@@ -492,6 +492,58 @@ namespace NonogramSolver
                             }
                         }
                     }
+                    else if (hint.Length == 3 && hints.Count == 3)
+                    {
+                        string s = "";
+
+                        for (int i = 0; i < line.Length; i++)
+                        {
+                            switch (result[i])
+                            {
+                                case null:
+                                    s += "0";
+                                    break;
+                                case true:
+                                    s += "T";
+                                    break;
+                                case false:
+                                    s += "F";
+                                    break;
+                            }
+                        }
+
+                        string[] array = s.Replace('0', ' ').Split('F').Where(x => x.Trim() != "").ToArray();
+
+                        if (array.Length == 3)
+                        {
+                            int i = 0;
+                            first = s.IndexOf("T");
+                            last = first + array[i].Trim().Length - 1;
+                            idx = startidx + 1;
+
+                            while (idx < line.Length)
+                            {
+                                if (result[idx] == null)
+                                {
+                                    if (idx < last - hints[i])
+                                        result[idx] = false;
+                                    else if (idx > last + hints[i])
+                                        result[idx] = false;
+                                }
+                                else if (result[idx] == false)
+                                {
+                                    i++;
+
+                                    if (i >= hints.Count) break;
+
+                                    first = s.IndexOf("T", idx);
+                                    last = first + array[i].Trim().Length - 1;
+                                }
+
+                                idx++;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -513,12 +565,6 @@ namespace NonogramSolver
                 switch (result[idx])
                 {
                     case null:
-                        //if (black == hints[0] && result[idx - 1] == true && empty + black > hints[0])
-                        //{
-                        //    result[idx] = false;
-                        //    idx = line.Length;
-                        //}
-
                         empty++;
 
                         if (empty >= hints[0] * 2) idx = line.Length;
@@ -553,7 +599,11 @@ namespace NonogramSolver
                             {
                                 hints.RemoveAt(0);
                             }
-                            else if (empty + black < hints.Take(2).Sum(x => x) + 1)
+                            else if (hints.Count > 1 && black == hints[1])
+                            {
+                                idx = line.Length;
+                            }
+                            else if (hints.Count >= 2 && empty + black < hints.Take(2).Sum(x => x) + 1)
                             {
                                 if (result[idx - 1] == true)
                                 {
@@ -565,7 +615,7 @@ namespace NonogramSolver
 
                                     hints.RemoveAt(0);
                                 }
-                                else
+                                else if (startidx + 1 + hints[0] < line.Length)
                                 {
                                     for (int i = idx - hints[0]; i < startidx + 1 + hints[0]; i++)
                                         result[i] = true;
