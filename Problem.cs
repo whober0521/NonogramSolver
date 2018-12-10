@@ -505,6 +505,7 @@ namespace NonogramSolver
             bool?[] result = line;
             int idx = 0;
             int empty = 0;
+            int lastempty = 0;
             int black = 0;
             int startidx = -1;
             int startlast = -1;
@@ -581,8 +582,13 @@ namespace NonogramSolver
                                 idx = line.Length;
                             }
                         }
+                        else if (lastempty >= hints[0])
+                        {
+                            idx = line.Length;
+                        }
 
                         black = 0;
+                        lastempty = empty;
                         empty = 0;
                         startlast = startidx;
                         startidx = idx;
